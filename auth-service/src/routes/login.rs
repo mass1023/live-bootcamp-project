@@ -6,8 +6,10 @@ use axum::Json;
 use serde::Deserialize;
 
 use crate::app_state::AppState;
+use crate::domain::UserStoreError as ErrorUser;
 use crate::domain::{LoginApiError, Email, Password};
 
+#[axum::debug_handler]
 pub async fn login(State(state): State<Arc<AppState>>, Json(request): Json<LoginRequest>) -> Result<impl IntoResponse, LoginApiError>{
     let email = Email::parse(request.email).map_err(|_| LoginApiError::InvalidCredentials)?;
     let password = Password::parse(request.password).map_err(|_| LoginApiError::InvalidCredentials)?;
@@ -18,9 +20,12 @@ pub async fn login(State(state): State<Arc<AppState>>, Json(request): Json<Login
 
     match result {
         Ok(_) => {
-            return Ok((StatusCode::OK));
+            return Ok(StatusCode::OK);
         },
         Err(e) => {
+            if e == ErrorUser::InvalidCredentials {
+                return Err(LoginApiError::IncorrectCredentials);
+            }
             return Err(LoginApiError::UnexpectedError);
         }
     }

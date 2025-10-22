@@ -6,5 +6,6 @@ pub enum AuthAPIError {
 
 pub enum LoginApiError {
     InvalidCredentials,
-    UnexpectedError
+    UnexpectedError,
+    IncorrectCredentials
 }

@@ -12,5 +12,5 @@ pub enum UserStoreError {
     UserAlreadyExists,
     UserNotFound,
     InvalidCredentials,
-    UnexpectedError,
+    UnexpectedError
 }

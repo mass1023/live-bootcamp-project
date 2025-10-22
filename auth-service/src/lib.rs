@@ -10,7 +10,7 @@ use axum::{
 use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
 use app_state::AppState;
-use domain::AuthAPIError;
+use domain::{AuthAPIError, LoginApiError};
 use serde::{Deserialize, Serialize};
 
 pub mod routes;
@@ -31,6 +31,23 @@ impl IntoResponse for AuthAPIError {
             AuthAPIError::UnexpectedError => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "Unexpected error")
             }
+        };
+
+        let body = serde_json::to_string(&ErrorResponse {
+            error: error_message.to_string(),
+        })
+        .unwrap_or_else(|_| "{\"error\": \"Failed to serialize error message\"}".to_string());
+
+        (status, [("Content-Type", "application/json")], body).into_response()
+    }
+}
+
+impl IntoResponse for LoginApiError {
+    fn into_response(self) -> Response {
+        let (status, error_message) = match self {
+            LoginApiError::IncorrectCredentials => (StatusCode::UNAUTHORIZED, "Incorrect credentials"),
+            LoginApiError::InvalidCredentials => (StatusCode::BAD_REQUEST, "Invalid credentials"),
+            LoginApiError::UnexpectedError => (StatusCode::INTERNAL_SERVER_ERROR, "Unexpected error"),
         };
 
         let body = serde_json::to_string(&ErrorResponse {
