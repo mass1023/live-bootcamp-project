@@ -1,18 +1,29 @@
-use std::sync::Arc;
 use axum::extract::State;
-use axum::response::IntoResponse;
 use axum::http::StatusCode;
 use axum::Json;
+use axum_extra::extract::CookieJar;
 use serde::Deserialize;
+use std::sync::Arc;
 
 use crate::app_state::AppState;
 use crate::domain::UserStoreError as ErrorUser;
 use crate::domain::{LoginApiError, Email, Password};
+use crate::utils::auth::generate_auth_cookie;
 
 #[axum::debug_handler]
-pub async fn login(State(state): State<Arc<AppState>>, Json(request): Json<LoginRequest>) -> Result<impl IntoResponse, LoginApiError>{
-    let email = Email::parse(request.email).map_err(|_| LoginApiError::InvalidCredentials)?;
-    let password = Password::parse(request.password).map_err(|_| LoginApiError::InvalidCredentials)?;
+pub async fn login(
+    State(state): State<Arc<AppState>>,
+    jar: CookieJar, // New!
+    Json(request): Json<LoginRequest>,
+) -> (CookieJar, Result<StatusCode, LoginApiError>) {
+    let email = match Email::parse(request.email) {
+        Ok(res) => res,
+        Err(_) => return (jar, Err(LoginApiError::InvalidCredentials))
+    };
+    let password = match Password::parse(request.password) {
+        Ok(res)=> res,
+        Err(_) => return (jar, Err(LoginApiError::InvalidCredentials))
+    };
 
     let user_store = state.user_store.read().await;
 
@@ -20,13 +31,20 @@ pub async fn login(State(state): State<Arc<AppState>>, Json(request): Json<Login
 
     match result {
         Ok(_) => {
-            return Ok(StatusCode::OK);
+            let auth_cookie = match generate_auth_cookie(&email) {
+                Ok(res)=> res,
+                Err(_) => {
+                    return (jar, Err(LoginApiError::UnexpectedError));
+                }
+            };
+            let updated_jar = jar.add(auth_cookie);
+            return (updated_jar, Ok(StatusCode::OK));
         },
         Err(e) => {
             if e == ErrorUser::InvalidCredentials {
-                return Err(LoginApiError::IncorrectCredentials);
+                return (jar, Err(LoginApiError::IncorrectCredentials));
             }
-            return Err(LoginApiError::UnexpectedError);
+            return (jar, Err(LoginApiError::UnexpectedError));
         }
     }
 }

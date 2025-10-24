@@ -4,6 +4,7 @@ pub enum AuthAPIError {
     UnexpectedError,
 }
 
+#[derive(Debug)]
 pub enum LoginApiError {
     InvalidCredentials,
     UnexpectedError,

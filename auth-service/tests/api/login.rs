@@ -1,4 +1,4 @@
-use auth_service::ErrorResponse;
+use auth_service::{utils::constants::JWT_COOKIE_NAME, ErrorResponse};
 
 use crate::helpers::TestApp;
 
@@ -57,13 +57,13 @@ async fn should_return_401_if_incorrect_credentials() {
     let app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
-    let body = serde_json::json!({
+    let signup_body = serde_json::json!({
         "email": random_email,
         "password": "password123",
         "requires2FA": false
     });
 
-    let response = app.post_signup(&body).await;
+    let response = app.post_signup(&signup_body).await;
     assert_eq!(response.status(), 201);
 
     let wrong_credentials = serde_json::json!({
@@ -79,4 +79,32 @@ async fn should_return_401_if_incorrect_credentials() {
         "The API did not fail with 401 Invalid Credentials when the payload was {}", 
         wrong_credentials
     );
+}
+
+
+#[tokio::test]
+async fn should_return_200_if_valid_credentials_and_2fa_disabled() {
+    let app = TestApp::new().await;
+    let random_email = crate::helpers::get_random_email();
+
+    let signup_body = serde_json::json!({
+        "email": random_email,
+        "password": "password123",
+        "requires2FA": false
+    });
+
+    let response = app.post_signup(&signup_body).await;
+    assert_eq!(response.status(), 201);
+
+    let login_body = serde_json::json!({"email": random_email, "password": "password123"});
+
+    let response = app.post_login(&login_body).await;
+    assert_eq!(response.status(), 200);
+
+    let auth_cookie = response
+        .cookies()
+        .find(|cookie| cookie.name() == JWT_COOKIE_NAME)
+        .expect("No auth cookie found");
+
+    assert!(!auth_cookie.value().is_empty());
 }
