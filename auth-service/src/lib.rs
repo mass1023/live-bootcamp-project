@@ -1,17 +1,18 @@
 use std::error::Error;
 use std::sync::Arc;
 use axum::{
-    http::StatusCode,
+    http::{StatusCode, Method},
     response::{IntoResponse, Response},
     routing::post, 
     serve::Serve, 
-    Router
+    Router,
+    Json
 };
 use tokio::net::TcpListener;
-use tower_http::services::ServeDir;
 use app_state::AppState;
-use domain::{AuthAPIError, LoginApiError};
+use domain::AuthAPIError;
 use serde::{Deserialize, Serialize};
+use tower_http::{cors::CorsLayer, services::ServeDir};
 
 pub mod routes;
 pub mod domain;
@@ -27,28 +28,12 @@ pub struct ErrorResponse {
 impl IntoResponse for AuthAPIError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            AuthAPIError::UserAlreadyExists => (StatusCode::CONFLICT, "User already exists"),
+            AuthAPIError::IncorrectCredentials => (StatusCode::UNAUTHORIZED, "Incorrect credentials"),
             AuthAPIError::InvalidCredentials => (StatusCode::BAD_REQUEST, "Invalid credentials"),
-            AuthAPIError::UnexpectedError => {
-                (StatusCode::INTERNAL_SERVER_ERROR, "Unexpected error")
-            }
-        };
-
-        let body = serde_json::to_string(&ErrorResponse {
-            error: error_message.to_string(),
-        })
-        .unwrap_or_else(|_| "{\"error\": \"Failed to serialize error message\"}".to_string());
-
-        (status, [("Content-Type", "application/json")], body).into_response()
-    }
-}
-
-impl IntoResponse for LoginApiError {
-    fn into_response(self) -> Response {
-        let (status, error_message) = match self {
-            LoginApiError::IncorrectCredentials => (StatusCode::UNAUTHORIZED, "Incorrect credentials"),
-            LoginApiError::InvalidCredentials => (StatusCode::BAD_REQUEST, "Invalid credentials"),
-            LoginApiError::UnexpectedError => (StatusCode::INTERNAL_SERVER_ERROR, "Unexpected error"),
+            AuthAPIError::UnexpectedError => (StatusCode::INTERNAL_SERVER_ERROR, "Unexpected error"),
+            AuthAPIError::UserAlreadyExists => (StatusCode::CONFLICT, "User already exists"),
+            AuthAPIError::MissingToken => (StatusCode::BAD_REQUEST, "Missing token"),
+            AuthAPIError::InvalidToken => (StatusCode::UNAUTHORIZED, "Invalid token")
         };
 
         let body = serde_json::to_string(&ErrorResponse {
@@ -70,8 +55,15 @@ pub struct Application {
 
 impl Application {
     pub async fn build(app_state: Arc<AppState>, address: &str) -> Result<Self, Box<dyn Error>> {
-        // let router = Router::new()
-        //     .nest_service("/", ServeDir::new("assets"));
+        let allow_origins = [
+            "http:://localhost:8000".parse()?,
+            // "http://[YOUR_DROPLET_IP]:8000".parse()?,
+        ];
+        let cors = CorsLayer::new()
+            .allow_methods([Method::GET, Method::POST])
+            .allow_credentials(true)
+            .allow_origin(allow_origins);
+
         let router = Router::new()
             .route("/signup", post(routes::signup))
             .route("/login", post(routes::login))
@@ -79,7 +71,8 @@ impl Application {
             .route("/verify-2fa", post(routes::verify_2fa))
             .route("/verify-token", post(routes::verify_token))
             .fallback_service(ServeDir::new("assets"))
-            .with_state(app_state);
+            .with_state(app_state)
+            .layer(cors);
 
         let listener = tokio::net::TcpListener::bind(address).await?;
         let address = listener.local_addr()?.to_string();

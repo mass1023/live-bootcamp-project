@@ -14,3 +14,13 @@ pub enum UserStoreError {
     InvalidCredentials,
     UnexpectedError
 }
+
+pub trait BannedTokenStore {
+    fn add_token(&mut self, token: String) -> Result<(), TokenStoreError>;
+    fn token_exists(&self, token: &str) -> Result<bool, TokenStoreError>;
+}
+
+#[derive(Debug, PartialEq)]
+pub enum TokenStoreError {
+    AlreadyExists
+}
