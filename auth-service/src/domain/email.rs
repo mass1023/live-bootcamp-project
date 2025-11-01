@@ -1,6 +1,6 @@
 use regex::Regex;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Email(pub String);
 
 impl Email {

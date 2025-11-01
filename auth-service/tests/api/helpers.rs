@@ -1,5 +1,18 @@
 use uuid::Uuid;
-use auth_service::{app_state::{AppState, BannedTokenStoreType}, services::{HashmapUserStore, HashsetBannedTokenStore}, utils::constants::test, Application};
+use auth_service::{
+    Application,
+    app_state::{
+        AppState,
+        BannedTokenStoreType, TwoFACodeStoreType
+    },
+    services::{
+        HashmapUserStore,
+        HashsetBannedTokenStore,
+        hashmap_two_fa_code_store::HashmapTwoFACodeStore,
+        mock_email_client::MockEmailClient
+    },
+    utils::constants::test
+};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use reqwest::cookie::Jar;
@@ -8,16 +21,20 @@ pub struct TestApp {
     pub address: String,
     pub http_client: reqwest::Client,
     pub banned_token_store: BannedTokenStoreType,
-    pub cookie_jar: Arc<Jar>
+    pub cookie_jar: Arc<Jar>,
+    pub two_fa_code_store: TwoFACodeStoreType
 }
 
 impl TestApp {
     pub async fn new() -> Self {
         let user_store = HashmapUserStore::default();
         let banned_token_store = HashsetBannedTokenStore::default();
+        let two_fa_code_store = HashmapTwoFACodeStore::default();
         let arc_user_store = Arc::new(RwLock::new(user_store));
         let arc_banned_token_store = Arc::new(RwLock::new(banned_token_store));
-        let app_state = Arc::new(AppState::new(arc_user_store, arc_banned_token_store.clone()));
+        let arc_two_fa_code_store = Arc::new(RwLock::new(two_fa_code_store));
+        let email_client = MockEmailClient::default();
+        let app_state = Arc::new(AppState::new(arc_user_store, arc_banned_token_store.clone(), arc_two_fa_code_store.clone(), email_client));
         let app = Application::build(app_state, test::APP_ADDRESS)
             .await
             .expect("Failed to build app");
@@ -33,7 +50,7 @@ impl TestApp {
             .build()
             .unwrap();
 
-        Self { address, http_client, banned_token_store: arc_banned_token_store, cookie_jar }
+        Self { address, http_client, banned_token_store: arc_banned_token_store, cookie_jar, two_fa_code_store: arc_two_fa_code_store }
     }
 
     pub async fn get_root(&self) -> reqwest::Response {
