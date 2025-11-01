@@ -58,7 +58,7 @@ mod tests {
 
     #[test]
     fn test_token_exists_false() {
-        let mut store = HashsetBannedTokenStore {
+        let store = HashsetBannedTokenStore {
             tokens: HashSet::new(),
         };
         let result = store.token_exists("token1");

@@ -1,6 +1,6 @@
 use crate::helpers::TestApp;
 use auth_service::{
-    domain::{Email, TwoFACodeStore},
+    domain::{Email},
     routes::TwoFactorAuthResponse,
     utils::constants::JWT_COOKIE_NAME,
     ErrorResponse,

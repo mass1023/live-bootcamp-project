@@ -88,7 +88,7 @@ impl TwoFACode {
         if code.is_empty() {
             return Err("Code cannot be empty".to_string());
         }
-        if code.chars().count() == 6 {
+        if code.chars().count() == 6 && code.chars().all(|c| c.is_ascii_digit()) {
             Ok(TwoFACode(code))
         }
         else {

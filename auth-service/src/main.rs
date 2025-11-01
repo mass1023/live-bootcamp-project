@@ -1,4 +1,4 @@
-use auth_service::{Application, app_state::{self, EmailClientType}, services::{HashmapUserStore, HashsetBannedTokenStore, hashmap_two_fa_code_store::HashmapTwoFACodeStore, mock_email_client::MockEmailClient}, utils::constants::prod};
+use auth_service::{Application, app_state::{self}, services::{HashmapUserStore, HashsetBannedTokenStore, hashmap_two_fa_code_store::HashmapTwoFACodeStore, mock_email_client::MockEmailClient}, utils::constants::prod};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
