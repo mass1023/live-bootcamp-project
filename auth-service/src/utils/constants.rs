@@ -7,6 +7,7 @@ pub const JWT_COOKIE_NAME: &str = "jwt";
 // Define a lazily evaluated static. lazy_static is needed because std_env::var is not a const function.
 lazy_static! {
     pub static ref JWT_SECRET: String = set_token();
+    pub static ref DATABASE_URL: String = set_database_url();
 }
 
 fn set_token() -> String {
@@ -16,6 +17,15 @@ fn set_token() -> String {
         panic!("JWT_SECRET must not be empty.");
     }
     secret
+}
+
+fn set_database_url() -> String {
+    dotenv().ok(); // Load environment variables
+    let db_url = std_env::var("DATABASE_URL").expect("DATABASE_URL must be set.");
+    if db_url.is_empty() {
+        panic!("DATABASE_URL must not be empty.");
+    }
+    db_url
 }
 
 pub mod env {

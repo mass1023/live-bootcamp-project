@@ -7,6 +7,7 @@ use axum::{
     serve::Serve, 
     Router    
 };
+use sqlx::{PgPool, postgres::PgPoolOptions};
 use tokio::net::TcpListener;
 use app_state::AppState;
 use domain::AuthAPIError;
@@ -84,4 +85,9 @@ impl Application {
         println!("listening on {}", self.address);
         self.server.await
     }
+}
+
+pub async fn get_postgres_pool(url: &str) -> Result<PgPool, sqlx::Error> {
+    // Create a new PostgreSQL connection pool
+    PgPoolOptions::new().max_connections(5).connect(url).await
 }
