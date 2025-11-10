@@ -3,7 +3,7 @@ use auth_service::{routes::SignupResponse, ErrorResponse};
 
 #[tokio::test]
 async fn should_return_422_if_malformed_input(){
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     let test_cases = [
@@ -16,16 +16,17 @@ async fn should_return_422_if_malformed_input(){
     for test_case in test_cases {
         let response = app.post_signup(&test_case).await;
         assert_eq!(
-            response.status(), 
-            422, 
-            "The API did not fail with 422 Unprocessable Entity when the payload was {}", 
+            response.status(),
+            422,
+            "The API did not fail with 422 Unprocessable Entity when the payload was {}",
             test_case);
     }
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_400_if_invalid_input() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
 
     let test_cases = [
         serde_json::json!({"email": "not-an-email", "password": "password123", "requires2FA": true}), // invalid email
@@ -36,25 +37,26 @@ async fn should_return_400_if_invalid_input() {
     for test_case in test_cases {
         let response = app.post_signup(&test_case).await;
         assert_eq!(
-            response.status(), 
-            400, 
-            "The API did not fail with 400 Bad Request when the payload was {}", 
+            response.status(),
+            400,
+            "The API did not fail with 400 Bad Request when the payload was {}",
             test_case);
-        
+
         assert_eq!(
             response
                 .json::<ErrorResponse>()
                 .await
                 .expect("Could not deserialize response body to ErrorResponse")
-                .error, 
+                .error,
             "Invalid credentials".to_owned()
         );
     }
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_409_if_email_already_exists() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     let body = serde_json::json!({
@@ -75,14 +77,15 @@ async fn should_return_409_if_email_already_exists() {
             .json::<ErrorResponse>()
             .await
             .expect("Could not deserialize response body to ErrorResponse")
-            .error, 
+            .error,
         "User already exists".to_owned()
     );
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_201_if_valid_input(){
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     let body = serde_json::json!({
@@ -99,7 +102,8 @@ async fn should_return_201_if_valid_input(){
     };
 
     assert_eq!(
-        response.json::<SignupResponse>().await.expect("Could not deserialize response body"), 
+        response.json::<SignupResponse>().await.expect("Could not deserialize response body"),
         expected_response
     );
+    app.clean_up().await;
 }

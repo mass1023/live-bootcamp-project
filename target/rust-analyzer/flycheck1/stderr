@@ -1,18 +1,220 @@
-   0.090656499s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint: stale: changed "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/domain/data_stores.rs"
-   0.090666349s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:           (vs) "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-ee7d3fbc77a0f2fa/dep-lib-auth_service"
-   0.090668208s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1762008515, nanos: 988487705 } < FileTime { seconds: 1762008630, nanos: 933310650 }
-   0.090754262s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint: fingerprint dirty for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("auth_service", ["lib"], "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/lib.rs", Edition2021) }
-   0.090762565s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-ee7d3fbc77a0f2fa/dep-lib-auth_service", reference_mtime: FileTime { seconds: 1762008515, nanos: 988487705 }, stale: "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/domain/data_stores.rs", stale_mtime: FileTime { seconds: 1762008630, nanos: 933310650 } }))
-   0.093344502s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint: stale: changed "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/domain/data_stores.rs"
-   0.093349918s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:           (vs) "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-be2ca221e48acf7d/dep-test-lib-auth_service"
-   0.093351912s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:                FileTime { seconds: 1762008515, nanos: 988487705 } < FileTime { seconds: 1762008630, nanos: 933310650 }
-   0.093387907s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint: fingerprint dirty for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("auth_service", ["lib"], "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/lib.rs", Edition2021) }
-   0.093393647s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleItem(ChangedFile { reference: "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-be2ca221e48acf7d/dep-test-lib-auth_service", reference_mtime: FileTime { seconds: 1762008515, nanos: 988487705 }, stale: "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/domain/data_stores.rs", stale_mtime: FileTime { seconds: 1762008630, nanos: 933310650 } }))
-   0.094232796s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint: fingerprint dirty for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: false }/TargetInner { name: "auth-service", doc: true, ..: with_path("/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/main.rs", Edition2021) }
-   0.094238997s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "auth_service" })
-   0.094560407s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint: fingerprint dirty for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: true }/TargetInner { name: "auth-service", doc: true, ..: with_path("/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/main.rs", Edition2021) }
-   0.094566032s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "auth_service" })
-   0.094925982s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="api"}: cargo::core::compiler::fingerprint: fingerprint dirty for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: true }/TargetInner { kind: "test", name: "api", benched: false, ..: with_path("/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/tests/api/main.rs", Edition2021) }
-   0.094931708s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="api"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(StaleDepFingerprint { name: "auth_service" })
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   0.137911556s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint: fingerprint error for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("auth_service", ["lib"], "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/lib.rs", Edition2021) }
+   0.137926956s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-b73e5563753d83d9/lib-auth_service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_impl
+  26: <unknown>
+   0.147273298s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint: fingerprint error for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("auth_service", ["lib"], "/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/lib.rs", Edition2021) }
+   0.147287512s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-91e3634e651d5882/test-lib-auth_service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_impl
+  26: <unknown>
+   0.148190223s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint: fingerprint error for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: false }/TargetInner { name: "auth-service", doc: true, ..: with_path("/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/main.rs", Edition2021) }
+   0.148196682s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-a1c767cdee657f15/bin-auth-service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_impl
+  26: <unknown>
+   0.148848800s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint: fingerprint error for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: true }/TargetInner { name: "auth-service", doc: true, ..: with_path("/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/src/main.rs", Edition2021) }
+   0.148854820s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="auth-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-e545d251e2bb6861/test-bin-auth-service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_impl
+  26: <unknown>
+   0.149663298s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="api"}: cargo::core::compiler::fingerprint: fingerprint error for auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)/Check { test: true }/TargetInner { kind: "test", name: "api", benched: false, ..: with_path("/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/tests/api/main.rs", Edition2021) }
+   0.149671128s  INFO prepare_target{force=false package_id=auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service) target="api"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service/target/debug/.fingerprint/auth-service-8cfa508e1d89960a/test-integration-test-api`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: cargo_util::paths::read_bytes
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::main
+  12: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  13: std::rt::lang_start::<()>::{closure#0}
+  14: core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &F>::call_once
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/core/src/ops/function.rs:290:21
+  15: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  16: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  17: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  18: std::rt::lang_start_internal::{{closure}}
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:175:24
+  19: std::panicking::catch_unwind::do_call
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:589:40
+  20: std::panicking::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panicking.rs:552:19
+  21: std::panic::catch_unwind
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/panic.rs:359:14
+  22: std::rt::lang_start_internal
+             at /rustc/1159e78c4747b02ef996e55082b704c09b970588/library/std/src/rt.rs:171:5
+  23: main
+  24: __libc_start_call_main
+  25: __libc_start_main_impl
+  26: <unknown>
     Checking auth-service v0.1.0 (/home/adrian/Projects/rust-bootcamp/live-bootcamp-project/auth-service)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.25s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.60s

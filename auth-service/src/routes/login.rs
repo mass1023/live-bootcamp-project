@@ -1,6 +1,6 @@
 use axum::extract::State;
 use axum::http::StatusCode;
-use axum::response::IntoResponse;
+use axum::response::{IntoResponse, Response};
 use axum::Json;
 use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
@@ -13,9 +13,9 @@ use crate::utils::auth::generate_auth_cookie;
 
 pub async fn login(
     State(state): State<Arc<AppState>>,
-    jar: CookieJar, // New!
+    jar: CookieJar,
     Json(request): Json<LoginRequest>,
-) -> (CookieJar, Result<impl IntoResponse, AuthAPIError>) {
+) -> (CookieJar, Result<LoginResponse, AuthAPIError>) {
     let email = match Email::parse(request.email) {
         Ok(res) => res,
         Err(_) => return (jar, Err(AuthAPIError::InvalidCredentials))
@@ -53,7 +53,7 @@ pub async fn login(
 }
 
 async fn handle_2fa (email: &Email, state: &AppState, jar: CookieJar)
-    -> (CookieJar, Result<(StatusCode, Json<LoginResponse>), AuthAPIError>) {
+    -> (CookieJar, Result<LoginResponse, AuthAPIError>) {
     // First, we must generate a new random login attempt ID and 2FA code
     let login_attempt_id = LoginAttemptId::default();
     let two_fa_code = TwoFACode::default();
@@ -72,11 +72,11 @@ async fn handle_2fa (email: &Email, state: &AppState, jar: CookieJar)
         message: "2FA Required".to_string(),
         loging_attempt_id: login_attempt_id.as_ref().to_string()
     };
-    return (jar, Ok((StatusCode::PARTIAL_CONTENT, Json(LoginResponse::TwoFactorAuth(response)))));
+    return (jar, Ok(LoginResponse::TwoFactorAuth(response)));
 }
 
 async fn handle_no_2fa(email: &Email, jar: CookieJar)
-    -> (CookieJar, Result<(StatusCode, Json<LoginResponse>), AuthAPIError>) {
+    -> (CookieJar, Result<LoginResponse, AuthAPIError>) {
     let auth_cookie = match generate_auth_cookie(&email) {
         Ok(res)=> res,
         Err(_) => {
@@ -85,13 +85,26 @@ async fn handle_no_2fa(email: &Email, jar: CookieJar)
     };
     let updated_jar = jar.add(auth_cookie);
 
-    return (updated_jar, Ok((StatusCode::OK, Json(LoginResponse::RegularAuth))));
+    // For non-2FA logins, we still return a TwoFactorAuthResponse but with empty loginAttemptId
+    // This is for consistency with the API response format
+    let response = TwoFactorAuthResponse{
+        message: "Login successful".to_string(),
+        loging_attempt_id: String::new()
+    };
+    return (updated_jar, Ok(LoginResponse::TwoFactorAuth(response)));
 }
 
 #[derive(Deserialize)]
 pub struct LoginRequest{
     pub email: String,
     pub password: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TwoFactorAuthResponse {
+    pub message: String,
+    #[serde(rename = "loginAttemptId")]
+    pub loging_attempt_id: String
 }
 
 #[derive(Debug, Serialize)]
@@ -101,9 +114,11 @@ pub enum LoginResponse {
     TwoFactorAuth(TwoFactorAuthResponse)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TwoFactorAuthResponse {
-    pub message: String,
-    #[serde(rename = "loginAttemptId")]
-    pub loging_attempt_id: String
+impl IntoResponse for LoginResponse {
+    fn into_response(self) -> Response {
+        match self {
+            LoginResponse::RegularAuth => StatusCode::OK.into_response(),
+            LoginResponse::TwoFactorAuth(response) => (StatusCode::OK, Json(response)).into_response()
+        }
+    }
 }

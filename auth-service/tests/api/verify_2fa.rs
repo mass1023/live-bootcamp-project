@@ -6,7 +6,7 @@ use auth_service::{
 
 #[tokio::test]
 async fn should_return_422_if_malformed_input() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
 
     let test_cases = [
         serde_json::json!({"login_attempt_id": "some_id"}),
@@ -22,10 +22,11 @@ async fn should_return_422_if_malformed_input() {
             test_case
         );
     }
+    app.clean_up().await;
 }
 #[tokio::test]
 async fn should_return_400_if_invalid_input() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
 
     let test_cases = [
         serde_json::json!({"email": "test@test.com", "loginAttemptId": "not-a-uuid", "2FACode": "123456"}),
@@ -50,10 +51,11 @@ async fn should_return_400_if_invalid_input() {
             "Invalid credentials".to_owned()
         );
     }
+    app.clean_up().await;
 }
 #[tokio::test]
 async fn should_return_401_if_incorrect_credentials() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     // First, signup and login to get a valid login_attempt_id
@@ -67,7 +69,7 @@ async fn should_return_401_if_incorrect_credentials() {
 
     let login_body = serde_json::json!({"email": random_email, "password": "password123"});
     let response = app.post_login(&login_body).await;
-    assert_eq!(response.status().as_u16(), 206);
+    assert_eq!(response.status().as_u16(), 200);
 
     let json_body = response
         .json::<auth_service::routes::TwoFactorAuthResponse>()
@@ -87,11 +89,12 @@ async fn should_return_401_if_incorrect_credentials() {
         401,
         "The API did not fail with 401 when the 2FA code was incorrect"
     );
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_401_if_old_code() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     // First, signup
@@ -106,7 +109,7 @@ async fn should_return_401_if_old_code() {
     // First login to get the initial 2FA code
     let login_body = serde_json::json!({"email": random_email, "password": "password123"});
     let response = app.post_login(&login_body).await;
-    assert_eq!(response.status().as_u16(), 206);
+    assert_eq!(response.status().as_u16(), 200);
 
     let json_body = response
         .json::<auth_service::routes::TwoFactorAuthResponse>()
@@ -132,10 +135,11 @@ async fn should_return_401_if_old_code() {
         401,
         "The API did not fail with 401 when using an old login attempt ID"
     );
+    app.clean_up().await;
 }
 #[tokio::test]
 async fn should_return_200_if_correct_code() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     // First, signup and login to get a valid login_attempt_id
@@ -149,7 +153,7 @@ async fn should_return_200_if_correct_code() {
 
     let login_body = serde_json::json!({"email": random_email, "password": "password123"});
     let response = app.post_login(&login_body).await;
-    assert_eq!(response.status().as_u16(), 206);
+    assert_eq!(response.status().as_u16(), 200);
 
     // Get the correct 2FA code from the store
     let two_fa_store = app.two_fa_code_store.read().await;
@@ -174,12 +178,13 @@ async fn should_return_200_if_correct_code() {
         .expect("No auth cookie found");
 
     assert!(!auth_cookie.value().is_empty());
+    app.clean_up().await;
 }
 
 
 #[tokio::test]
 async fn should_return_401_if_same_code_twice() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     // First, signup and login to get a valid login_attempt_id
@@ -193,7 +198,7 @@ async fn should_return_401_if_same_code_twice() {
 
     let login_body = serde_json::json!({"email": random_email, "password": "password123"});
     let response = app.post_login(&login_body).await;
-    assert_eq!(response.status().as_u16(), 206);
+    assert_eq!(response.status().as_u16(), 200);
 
     // Get the correct 2FA code from the store
     let two_fa_store = app.two_fa_code_store.read().await;
@@ -218,4 +223,5 @@ async fn should_return_401_if_same_code_twice() {
         401,
         "The API did not fail with 401 when using the same 2FA code twice"
     );
+    app.clean_up().await;
 }

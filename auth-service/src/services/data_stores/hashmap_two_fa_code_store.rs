@@ -18,9 +18,7 @@ impl TwoFACodeStore for HashmapTwoFACodeStore{
         login_attempt_id: LoginAttemptId,
         code: TwoFACode,
     ) -> Result<(), TwoFACodeStoreError> {
-        if self.codes.contains_key(&email) {
-            return Err(TwoFACodeStoreError::UnexpectedError)
-        }
+        // Replace any existing code for this email (allows re-login to invalidate old codes)
         self.codes.insert(email, (login_attempt_id, code));
         Ok(())
     }
@@ -59,8 +57,15 @@ mod tests {
         let login_id = LoginAttemptId::default();
         let code = TwoFACode::default();
         store.add_code(email.clone(), login_id.clone(), code.clone()).await.unwrap();
-        let result = store.add_code(email, LoginAttemptId::default(), TwoFACode::default()).await;
-        assert_eq!(result, Err(TwoFACodeStoreError::UnexpectedError));
+        let new_login_id = LoginAttemptId::default();
+        let new_code = TwoFACode::default();
+        let result = store.add_code(email.clone(), new_login_id.clone(), new_code.clone()).await;
+        // Should succeed and replace the old code
+        assert!(result.is_ok());
+        // Verify the new code is stored
+        let stored = store.get_code(&email).await.unwrap();
+        assert_eq!(stored.0, new_login_id);
+        assert_eq!(stored.1, new_code);
     }
 
     #[tokio::test]

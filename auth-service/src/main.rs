@@ -1,15 +1,17 @@
 use auth_service::{
-    Application, 
-    app_state::{self}, 
+    Application,
+    app_state::{self},
     services::{
-        HashmapUserStore, 
-        HashsetBannedTokenStore, 
-        hashmap_two_fa_code_store::HashmapTwoFACodeStore, 
+        data_stores::PostgresUserStore,
+        RedisBannedTokenStore,
+        HashmapTwoFACodeStore,
         mock_email_client::MockEmailClient
-    }, 
+    },
     utils::constants::prod,
     get_postgres_pool,
-    utils::constants::DATABASE_URL
+    utils::constants::DATABASE_URL,
+    get_redis_client,
+    utils::constants::REDIS_HOST_NAME
 };
 use sqlx::PgPool;
 use std::sync::Arc;
@@ -17,12 +19,14 @@ use tokio::sync::RwLock;
 
 #[tokio::main]
 async fn main() {
-    let user_store = HashmapUserStore::default();
-    let banned_token_store = HashsetBannedTokenStore::default();
+    println!("=== APPLICATION STARTING ===");
+    let pg_pool = configure_postgresql().await;
+    let redis_conn = configure_redis();
+    let arc_redis_conn = Arc::new(RwLock::new(redis_conn));
+    let user_store = PostgresUserStore::new(pg_pool);
+    let banned_token_store = RedisBannedTokenStore::new(arc_redis_conn);
     let two_fa_code_store = HashmapTwoFACodeStore::default();
     let email_client = MockEmailClient::default();
-
-    let pg_pool = configure_postgresql().await;
 
     let arc_user_store = Arc::new(RwLock::new(user_store));
     let arc_banned_token_store = Arc::new(RwLock::new(banned_token_store));
@@ -36,16 +40,26 @@ async fn main() {
 
 async fn configure_postgresql() -> PgPool {
     println!("Configuring Postgres database... {:?}", *DATABASE_URL);
-    // Create a new database connection pool
+    
     let pg_pool = get_postgres_pool(&DATABASE_URL)
         .await
         .expect("Failed to create Postgres connection pool!");
-
-    // Run database migrations against our test database! 
-    sqlx::migrate!()
-        .run(&pg_pool)
-        .await
-        .expect("Failed to run migrations");
+    
+    println!("Running migrations...");
+    match sqlx::migrate!("./migrations").run(&pg_pool).await {
+        Ok(_) => println!("Migrations completed successfully!"),
+        Err(e) => {
+            eprintln!("Migration error: {:?}", e);
+            panic!("Failed to run migrations: {}", e);
+        }
+    }
 
     pg_pool
+}
+
+fn configure_redis() -> redis::Connection {
+    get_redis_client(REDIS_HOST_NAME.to_owned())
+        .expect("Failed to get Redis client")
+        .get_connection()
+        .expect("Failed to get Redis connection")
 }

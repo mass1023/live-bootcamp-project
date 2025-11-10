@@ -16,7 +16,7 @@ pub async fn verify_token(
         Ok(_) => {
             // Check if token is banned
             let store = state.banned_token_store.read().await;
-            match store.token_exists(&request.token) {
+            match store.contains_token(&request.token).await {
                 Ok(true) => StatusCode::UNAUTHORIZED.into_response(),
                 Ok(false) => StatusCode::OK.into_response(),
                 Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),

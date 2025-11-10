@@ -22,8 +22,8 @@ pub async fn logout(State(state): State<Arc<AppState>>, jar: CookieJar) -> (Cook
     let mut banned_token_store = state.banned_token_store.write().await;
 
     match validate_token(&token).await {
-        Ok(_) => { 
-            banned_token_store.add_token(token).expect("Error adding token to banned token store");
+        Ok(_) => {
+            banned_token_store.add_token(token).await.expect("Error adding token to banned token store");
         },
         Err(_) => {
             return (jar, Err(AuthAPIError::InvalidToken));

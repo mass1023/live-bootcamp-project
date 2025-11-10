@@ -18,14 +18,16 @@ pub enum UserStoreError {
     UnexpectedError
 }
 
+#[async_trait::async_trait]
 pub trait BannedTokenStore {
-    fn add_token(&mut self, token: String) -> Result<(), TokenStoreError>;
-    fn token_exists(&self, token: &str) -> Result<bool, TokenStoreError>;
+    async fn add_token(&mut self, token: String) -> Result<(), BannedTokenStoreError>;
+    async fn contains_token(&self, token: &str) -> Result<bool, BannedTokenStoreError>;
 }
 
 #[derive(Debug, PartialEq)]
-pub enum TokenStoreError {
-    AlreadyExists
+pub enum BannedTokenStoreError {
+    AlreadyExists,
+    UnexpectedError,
 }
 
 #[async_trait::async_trait]

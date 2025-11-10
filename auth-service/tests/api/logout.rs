@@ -4,15 +4,16 @@ use reqwest::Url;
 
 #[tokio::test]
 async fn should_return_400_if_jwt_cookie_missing() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
 
     let response = app.post_logout().await;
     assert_eq!(response.status(), 400);
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_401_if_invalid_token() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
 
     // add invalid cookie
     app.cookie_jar.add_cookie_str(
@@ -25,11 +26,12 @@ async fn should_return_401_if_invalid_token() {
 
     let response = app.post_logout().await;
     assert_eq!(response.status(), 401);
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_200_if_valid_jwt_cookie(){
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     let signup_body = serde_json::json!({
@@ -64,13 +66,15 @@ async fn should_return_200_if_valid_jwt_cookie(){
     assert_eq!(response.status(), 200);
     let token = auth_cookie.value();
     let store = app.banned_token_store.write().await;
-    let response = store.token_exists(token);
+    let response = store.contains_token(token).await;
     assert_eq!(response, Ok(true));
+    drop(store);
+    app.clean_up().await;
 }
 
 #[tokio::test]
 async fn should_return_400_if_logout_called_twice_in_a_row() {
-    let app = TestApp::new().await;
+    let mut app = TestApp::new().await;
     let random_email = crate::helpers::get_random_email();
 
     let signup_body = serde_json::json!({
@@ -106,4 +110,5 @@ async fn should_return_400_if_logout_called_twice_in_a_row() {
 
     let response = app.post_logout().await;
     assert_eq!(response.status(), 400);
+    app.clean_up().await;
 }
