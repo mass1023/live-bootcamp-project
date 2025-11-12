@@ -8,6 +8,7 @@ use crate::domain::{AuthAPIError, Email, Password};
 use crate::{domain::User, app_state::AppState};
 use crate::domain::UserStoreError as ErrorUser;
 
+#[tracing::instrument(name = "Signup", skip_all)]
 pub async fn signup(State(state): State<Arc<AppState>>,  Json(request): Json<SignupRequest>) -> Result<impl IntoResponse, AuthAPIError>{
     let email = Email::parse(request.email).map_err(|_| AuthAPIError::InvalidCredentials)?;
     let password = Password::parse(request.password).map_err(|_| AuthAPIError::InvalidCredentials)?;

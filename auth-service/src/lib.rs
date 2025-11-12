@@ -13,7 +13,8 @@ use tokio::net::TcpListener;
 use app_state::AppState;
 use domain::AuthAPIError;
 use serde::{Deserialize, Serialize};
-use tower_http::{cors::CorsLayer, services::ServeDir};
+use tower_http::{cors::CorsLayer, services::ServeDir, trace::TraceLayer};
+use utils::tracing::{make_span_with_request_id, on_request, on_response};
 
 pub mod routes;
 pub mod domain;
@@ -28,6 +29,7 @@ pub struct ErrorResponse {
 
 impl IntoResponse for AuthAPIError {
     fn into_response(self) -> Response {
+        log_error_chain(&self);
         let (status, error_message) = match self {
             AuthAPIError::IncorrectCredentials => (StatusCode::UNAUTHORIZED, "Incorrect credentials"),
             AuthAPIError::InvalidCredentials => (StatusCode::BAD_REQUEST, "Invalid credentials"),
@@ -44,6 +46,20 @@ impl IntoResponse for AuthAPIError {
 
         (status, [("Content-Type", "application/json")], body).into_response()
     }
+}
+
+fn log_error_chain(e: &(dyn Error + 'static)) {
+    let separator =
+        "\n-----------------------------------------------------------------------------------\n";
+    let mut report = format!("{}{:?}\n", separator, e);
+    let mut current = e.source();
+    while let Some(cause) = current {
+        let str = format!("Caused by:\n\n{:?}", cause);
+        report = format!("{}\n{}", report, str);
+        current = cause.source();
+    }
+    report = format!("{}\n{}", report, separator);
+    tracing::error!("{}", report);
 }
 
 // this struct encapsulates our application-related logic
@@ -73,7 +89,13 @@ impl Application {
             .route("/verify-token", post(routes::verify_token))
             .fallback_service(ServeDir::new("assets"))
             .with_state(app_state)
-            .layer(cors);
+            .layer(cors)
+            .layer(
+                TraceLayer::new_for_http()
+                    .make_span_with(make_span_with_request_id)
+                    .on_request(on_request)
+                    .on_response(on_response),
+            );
 
         let listener = tokio::net::TcpListener::bind(address).await?;
         let address = listener.local_addr()?.to_string();
@@ -83,7 +105,7 @@ impl Application {
     }
 
     pub async fn run(self) -> Result<(), std::io::Error> {
-        println!("listening on {}", self.address);
+        tracing::info!("listening on {}", &self.address); // Updated!
         self.server.await
     }
 }

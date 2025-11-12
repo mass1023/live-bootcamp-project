@@ -77,6 +77,7 @@ impl UserStore for PostgresUserStore {
         }
     }
 
+    #[tracing::instrument(name = "Validating user credentials in PostgreSQL", skip_all)]
     async fn validate_user(&self, email: &str, password: &str) -> Result<(), UserStoreError> {
         let record = sqlx::query!(
             r#"
@@ -101,15 +102,19 @@ impl UserStore for PostgresUserStore {
 }
 
 // Helper function to verify if a given password matches an expected hash
+#[tracing::instrument(name = "Validating user credentials in PostgreSQL", skip_all)]
 async fn verify_password_hash(
     expected_password_hash: String,
     password_candidate: String,
 ) -> Result<(), Box<dyn Error>> {
+    let current_span: tracing::Span = tracing::Span::current();
     let handle = tokio::task::spawn_blocking(move || {
-        let expected_password_hash: PasswordHash<'_> =
-            PasswordHash::new(&expected_password_hash)?;
-        Argon2::default()
-            .verify_password(password_candidate.as_bytes(), &expected_password_hash)
+        current_span.in_scope(|| { 
+            let expected_password_hash: PasswordHash<'_> =
+                PasswordHash::new(&expected_password_hash)?;
+            Argon2::default()
+                .verify_password(password_candidate.as_bytes(), &expected_password_hash)
+        })
     });
     let result = match handle.await {
         Ok(res) => res,
@@ -122,18 +127,22 @@ async fn verify_password_hash(
 }
 
 // Helper function to hash passwords before persisting them in the database.
+#[tracing::instrument(name = "Computing password hash", skip_all)]
 async fn compute_password_hash(password: String) -> Result<String, Box<dyn Error + Send + Sync>> {
+    let current_span: tracing::Span = tracing::Span::current(); 
     let result = tokio::task::spawn_blocking(move || {
-        let salt: SaltString = SaltString::generate(&mut OsRng);
-        let password_hash = Argon2::new(
-            Algorithm::Argon2id,
-            Version::V0x13,
-            Params::new(15000, 2, 1, None)?,
-        )
-        .hash_password(password.as_bytes(), &salt)?
-        .to_string();
+        current_span.in_scope(|| { 
+            let salt: SaltString = SaltString::generate(&mut OsRng);
+            let password_hash = Argon2::new(
+                Algorithm::Argon2id,
+                Version::V0x13,
+                Params::new(15000, 2, 1, None)?,
+            )
+            .hash_password(password.as_bytes(), &salt)?
+            .to_string();
 
-        Ok(password_hash)
+            Ok(password_hash)
+        })
     })
     .await;
 
