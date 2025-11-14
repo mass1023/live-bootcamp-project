@@ -5,6 +5,7 @@ use axum::Json;
 use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
+use color_eyre::eyre::{eyre, Result};
 
 use crate::app_state::AppState;
 use crate::domain::{EmailClient, UserStoreError as ErrorUser};
@@ -47,7 +48,7 @@ pub async fn login(
             if e == ErrorUser::InvalidCredentials {
                 return (jar, Err(AuthAPIError::IncorrectCredentials));
             }
-            return (jar, Err(AuthAPIError::UnexpectedError));
+            return (jar, Err(AuthAPIError::UnexpectedError(eyre!("User store error: {:?}", e))));
         }
     }
 }
@@ -60,12 +61,12 @@ async fn handle_2fa (email: &Email, state: &AppState, jar: CookieJar)
 
     // Store the ID and code in our 2FA code store. Return `AuthAPIError::UnexpectedError` if the operation fails
     let mut two_fa_store = state.two_fa_code_store.write().await;
-    if let Err(_) = two_fa_store.add_code(email.clone(), login_attempt_id.clone(), two_fa_code.clone()).await {
-        return (jar, Err(AuthAPIError::UnexpectedError));
+    if let Err(e) = two_fa_store.add_code(email.clone(), login_attempt_id.clone(), two_fa_code.clone()).await {
+        return (jar, Err(AuthAPIError::UnexpectedError(e.into())));
     }
 
-    if let Err(_) = state.email_client.send_email(&email, "2FA Code", &two_fa_code.as_ref()).await {
-        return (jar, Err(AuthAPIError::UnexpectedError));
+    if let Err(e) = state.email_client.send_email(&email, "2FA Code", &two_fa_code.as_ref()).await {
+        return (jar, Err(AuthAPIError::UnexpectedError(eyre!("Email send error: {:?}", e))));
     }
 
     let response = TwoFactorAuthResponse{
@@ -79,8 +80,8 @@ async fn handle_no_2fa(email: &Email, jar: CookieJar)
     -> (CookieJar, Result<LoginResponse, AuthAPIError>) {
     let auth_cookie = match generate_auth_cookie(&email) {
         Ok(res)=> res,
-        Err(_) => {
-            return (jar, Err(AuthAPIError::UnexpectedError));
+        Err(e) => {
+            return (jar, Err(AuthAPIError::UnexpectedError(eyre!("Generate token error: {:?}", e))));
         }
     };
     let updated_jar = jar.add(auth_cookie);

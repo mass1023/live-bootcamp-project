@@ -1,4 +1,5 @@
 use super::Email;
+use color_eyre::Result;
 
 // This trait represents the interface all concrete email clients should implement
 #[async_trait::async_trait]

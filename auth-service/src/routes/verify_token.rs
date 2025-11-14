@@ -12,20 +12,9 @@ pub async fn verify_token(
     Json(request): Json<VerifyTokenRequest>
 ) -> impl IntoResponse {
 
-    match validate_token(&request.token).await {
-        Ok(_) => {
-            // Check if token is banned
-            let store = state.banned_token_store.read().await;
-            match store.contains_token(&request.token).await {
-                Ok(true) => StatusCode::UNAUTHORIZED.into_response(),
-                Ok(false) => StatusCode::OK.into_response(),
-                Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-            }
-        },
-        Err(e) => match e.kind() {
-            jsonwebtoken::errors::ErrorKind::InvalidToken => StatusCode::UNPROCESSABLE_ENTITY.into_response(),
-            _ => StatusCode::UNAUTHORIZED.into_response()
-        }
+    match validate_token(&request.token, state.banned_token_store.clone()).await {
+        Ok(_) => StatusCode::OK.into_response(),
+        Err(_) => StatusCode::UNAUTHORIZED.into_response()
     }
 }
 

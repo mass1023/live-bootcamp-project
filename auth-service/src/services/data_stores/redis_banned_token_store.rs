@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use color_eyre::eyre::Context;
 use redis::{Commands, Connection};
 use tokio::sync::RwLock;
 
@@ -25,14 +26,19 @@ impl BannedTokenStore for RedisBannedTokenStore {
         let ttl = TOKEN_TTL_SECONDS as u64;
         let mut conn = self.conn.write().await;
         conn.set_ex(&key, true, ttl)
-            .map_err(|_| BannedTokenStoreError::UnexpectedError)
+            .wrap_err("failed to cast TOKEN_TTL_SECONDS to u64")
+            .map_err(BannedTokenStoreError::UnexpectedError)?;
+
+        Ok(())
     }
 
     async fn contains_token(&self, token: &str) -> Result<bool, BannedTokenStoreError> {
         let key = get_key(token);
         let mut conn = self.conn.write().await;
-        conn.exists(&key)
-            .map_err(|_| BannedTokenStoreError::UnexpectedError)
+        let is_banned = conn.exists(&key)
+            .wrap_err("failed to check if token exists in Redis")
+            .map_err(BannedTokenStoreError::UnexpectedError)?;
+        Ok(is_banned)
     }
 }
 

@@ -1,26 +1,19 @@
-use std::fmt;
+use thiserror::Error;
+use color_eyre::eyre::Report;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum AuthAPIError {
+    #[error("User already exists")]
     UserAlreadyExists,
+    #[error("Invalid credentials")]
     InvalidCredentials,
-    UnexpectedError,
+    #[error("Unexpected error")]
+    UnexpectedError(#[source] Report),
+    #[error("Incorrect credentials")]
     IncorrectCredentials,
+    #[error("Missing token")]
     MissingToken,
+    #[error("Invalid token")]
     InvalidToken
 }
 
-impl fmt::Display for AuthAPIError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            AuthAPIError::UserAlreadyExists => write!(f, "User already exists"),
-            AuthAPIError::InvalidCredentials => write!(f, "Invalid credentials"),
-            AuthAPIError::UnexpectedError => write!(f, "Unexpected error"),
-            AuthAPIError::IncorrectCredentials => write!(f, "Incorrect credentials"),
-            AuthAPIError::MissingToken => write!(f, "Missing token"),
-            AuthAPIError::InvalidToken => write!(f, "Invalid token"),
-        }
-    }
-}
-
-impl std::error::Error for AuthAPIError {}

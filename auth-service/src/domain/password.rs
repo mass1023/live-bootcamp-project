@@ -1,3 +1,5 @@
+use color_eyre::Result;
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Password(pub String);
 

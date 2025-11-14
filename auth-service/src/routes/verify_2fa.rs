@@ -54,14 +54,14 @@ pub async fn verify_2fa(
     // Generate JWT auth cookie
     let auth_cookie = match generate_auth_cookie(&email) {
         Ok(cookie) => cookie,
-        Err(_) => {
-            return (jar, Err(AuthAPIError::UnexpectedError));
+        Err(e) => {
+            return (jar, Err(AuthAPIError::UnexpectedError(color_eyre::eyre::eyre!("Generate token error: {:?}", e))));
         }
     };
     let updated_jar = jar.add(auth_cookie);
 
-    if let Err(_) = two_fa_code_store.remove_code(&email).await {
-        return (updated_jar, Err(AuthAPIError::UnexpectedError));
+    if let Err(e) = two_fa_code_store.remove_code(&email).await {
+        return (updated_jar, Err(AuthAPIError::UnexpectedError(color_eyre::eyre::eyre!("Remove code error: {:?}", e))));
     }
 
     (updated_jar, Ok(StatusCode::OK.into_response()))

@@ -1,5 +1,7 @@
 use regex::Regex;
 
+use color_eyre::Result;
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Email(pub String);
 

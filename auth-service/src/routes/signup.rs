@@ -29,7 +29,7 @@ pub async fn signup(State(state): State<Arc<AppState>>,  Json(request): Json<Sig
             if e == ErrorUser::UserAlreadyExists {
                 return Err(AuthAPIError::UserAlreadyExists);
             } else {
-                return Err(AuthAPIError::UnexpectedError);
+                return Err(AuthAPIError::UnexpectedError(color_eyre::eyre::eyre!("User store error: {:?}", e)));
             }
         }
         

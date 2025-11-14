@@ -3,14 +3,14 @@ use reqwest::Url;
 use crate::helpers::{get_random_email, TestApp};
 
 #[tokio::test]
-async fn should_return_422_if_malformed_input(){
+async fn should_return_401_if_malformed_input(){
     let mut app = TestApp::new().await;
     let malformed_jwt = serde_json::json!({
         "token": "test"
     });
 
     let response = app.post_verify_token(&malformed_jwt).await;
-    assert_eq!(response.status(), 422);
+    assert_eq!(response.status(), 401);
     app.clean_up().await;
 }
 

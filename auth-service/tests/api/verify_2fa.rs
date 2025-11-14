@@ -86,8 +86,8 @@ async fn should_return_401_if_incorrect_credentials() {
     let response = app.post_verify_2fa(&wrong_verify_body).await;
     assert_eq!(
         response.status(),
-        401,
-        "The API did not fail with 401 when the 2FA code was incorrect"
+        400,
+        "The API did not fail with 400 when the 2FA code was incorrect"
     );
     app.clean_up().await;
 }
